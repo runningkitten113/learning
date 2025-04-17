@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="author" content="Jomdeveloper">
+  <title>Fish in aquarium | HTML CSS</title>
+  <link rel="stylesheet" href="/fishTank.css">
+</head>
+<body>
+<div class="aquarium">
+  <div class="back"></div>
+  <div class="left"></div>
+  <div class="bottom"></div>
+  <div class="sand"></div>
+  <div class="right"></div>
+  <div class="front"></div>
+  <div class="plant" style="left: 22%; bottom: 22%" ></div>
+  <div class="plant" style="left: 24%; bottom: 22%" ></div>
+  <div class="plant" style="left: 55%; bottom: 22%" ></div>
+  <div class="plant" style="left: 56%; bottom: 22%" ></div>
+  <div class="plant" style="left: 58%; bottom: 22%" ></div>
+  <div class="plant" style="left: 70%; bottom: 22%" ></div>
+  <div class="fish" id="youmustgo">
+    <div class="eye"></div>
+    <div class="mouth"></div>
+    <div class="tail"></div>
+    <div class="body"></div>
+    <div class="fin upper"></div>
+    <div class="fin lower"></div>
+    <div class="fin middle"></div>
+    <div class="bubble"></div>
+  </div>
+  <div class="bubbles"></div>
+  <div class="bubbles" style="animation-delay: 1s"></div>
+  <div class="bubbles" style="animation-delay: 2s"></div>
+  <div class="bubbles" style="animation-delay: 1s; left: 40%"></div>
+  <div class="bubbles" style="animation-delay: 2s; left: 40%"></div>
+  <div class="bubbles" style="animation-delay: 2s; left: 75%"></div>
+  <div class="bubbles" style="animation-delay: 3s; left: 75%"></div>
+  <div class="bubbles" style="animation-delay: 4s; left: 75%"></div>
+  <div class="plant" style="left: 2%"></div>
+  <div class="plant" style="left: 4%"></div>
+  <div class="plant" style="left: 8%"></div>
+  <div class="plant" style="left: 10%"></div>
+  <div class="plant" style="left: 14%"></div>
+  <div class="plant" style="left: 16%"></div>
+  <div class="plant" style="left: 18%"></div>
+  <div class="plant" style="left: 24%"></div>
+  <div class="plant" style="left: 28%"></div>
+  <div class="plant" style="left: 34%"></div>
+  <div class="plant" style="left: 36%"></div>
+  <div class="plant" style="left: 38%"></div>
+  <div class="plant" style="left: 42%"></div>
+  <div class="plant" style="left: 48%"></div>
+  <div class="plant" style="left: 50%"></div>
+  <div class="plant" style="left: 54%"></div>
+  <div class="plant" style="left: 58%"></div>
+  <div class="plant" style="left: 60%"></div>
+  <div class="stone"></div>
+  <div class="stone2"></div>
+  <div class="stone3"></div>
+  <div class="stone4"></div>
+  <div class="stone5"></div>
+  <div class="plant" style="left: 68%"></div>
+  <div class="plant" style="left: 70%"></div>
+  <div class="plant" style="left: 74%"></div>
+  <div class="plant" style="left: 80%"></div>
+  <div class="plant" style="left: 84%; bottom: 6%" ></div>
+  <div class="plant" style="left: 87%; bottom: 10%" ></div>
+  <div class="plant" style="left: 90%; bottom: 14%" ></div>
+  <div class="plant" style="left: 93%; bottom: 18%" ></div>
+  <div class="plant" style="left: 95%; bottom: 22%" ></div>
+  <div class="right"></div>
+  <div class="front"></div>
+</div>
+<script>
+  function checkGoal(callback) {
+    fetch("/isFish")
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        const dataSet = data.map(
+          user => String(`${user.goalpassed}`)
+        )
+        callback(dataSet)
+      })
+  }
+
+  let passed = false;
+  checkGoal((pass) => {
+    passed = pass;
+    if (passed == "true"){
+      alert('Goal passed');
+      document.getElementById("youmustgo").style.visibility = "visible";
+    }
+  });
+</script>
+<script src="index.js"></script>
+</body>
+</html>

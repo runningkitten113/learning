@@ -1,0 +1,100 @@
+@media (max-width: 100%) {}
+html {
+    background-color: rgb(242, 205, 159);
+}
+
+.layout {
+    border-radius: 15px;
+    background: #6bbaf1; /* (107,186,241) in rgb */
+    text-align: center;
+    padding: 5px 10px;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 0 20px gray;
+}
+
+.layout h1 {
+    position: absolute;
+    top: 0;
+    margin: 10px;
+}
+
+.timer {
+    width: 300px;
+    height: 250px;
+    display: flex;
+}
+
+.aquariam {
+    width: 500px;
+    height: 600px;
+    position: absolute;
+    top: 0%;
+    left: 35%;
+    margin-top: 10px;
+}
+
+.stats {
+    width: 300px;
+    height: 250px;
+    position: absolute;
+    bottom: 10%;
+}
+
+.tasks {
+    width: 300px;
+    height: 650px;
+    position: absolute;
+    right: 1%;
+}
+
+#list {
+    position: absolute;
+    background-color: rgb(242, 205, 159);
+    width: 300px;
+    height: 500px;
+    overflow-y: scroll;
+    align-items: center;
+    font-weight: bold;
+    border-radius: 30px;
+    font-size: 30px;
+}
+
+#countingValue{
+    position: absolute;
+    bottom: 40px;
+    font-weight: bold;
+}
+
+#celebration {
+    position: absolute;
+    top: 40px;
+}
+
+img {
+    width: 150px;
+    margin: 0 auto;
+    padding: 5px 10px;
+    mix-blend-mode: multiply;
+}
+
+.layout #links, form {
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 10px;
+}
+
+li {
+    list-style-type: none;
+}
+
+button:hover, img:hover {
+    cursor: pointer;
+}
+
+.taskName {
+    padding: 100px;
+}
