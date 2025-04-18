@@ -1,30 +1,41 @@
-import express from "express";
-import pg from "pg";
-import path from "path";
-import bodyParser from "body-parser";
+/*import express from "./node_modules/express/index.js";
+import path from "./node_modules/path/path.js";
+import bodyParser from "./node_modules/body-parser/index.js";
+import postgres from "postgres";*/
+import config from "./sqlconfig.json" with { type: "json" };
+import express from 'express';
+import path from 'path';
+import bodyParser from 'body-parser';
 import postgres from "postgres";
-import { fileURLToPath } from 'url';
+
+const __dirname = import.meta.dirname;
 
 const app = express();
 const port = 3000;
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const sql = postgres({
-  host: '24.240.181.109',
-  port: 5432,
-  username: 'u60136aed',
-  password: '?07VPJq9=Nn4',
-  database: 'postgres',
-  schema: 's_fe80a0cc',
+  host: config.host,
+  port: config.port,
+  username: config.username,
+  password: config.password,
+  database: config.database,
+  schema: config.schema,
 } )
-const pool = new pg.Pool(sql);
 
 
 app.use(express.static(path.join('')));
 app.use(bodyParser.urlencoded({ extended: false }));
+
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, 'main.html'));
+})
+
+app.get("/login", (req, res) => {
+  res.sendFile(path.join(__dirname, 'login.html'));
+})
+
+app.get("/createAcc", (req, res) => {
+  res.sendFile(path.join(__dirname, 'createAcc.html'));
 })
 
 app.get("/dashboard", (req, res) => {
@@ -50,23 +61,23 @@ app.get("/time", (req, res) => {
 
 })
 
-  app.get("/validate", (req, res) => {
-    const validate = async () => {
-      let query = await sql`SELECT username FROM s_fe80a0cc.procrastiNOT;`;
-      console.log(query.length)
-      let values = []
-      for (let i = 0; i < query.length; i++) {
-        values.push(query[i])
-        console.log(values)
-      }
-      res.send(values);
+app.get("/validate", (req, res) => {
+  const validate = async () => {
+    let query = await sql`SELECT username FROM s_fe80a0cc.procrastiNOT;`;
+    console.log(query.length)
+    let values = []
+    for (let i = 0; i < query.length; i++) {
+      values.push(query[i])
+      console.log(values)
     }
-    validate();
-  });
+    res.send(values);
+  }
+  validate();
+});
 
-  app.post("/createUser", (req, res) => {
-    res.send("REQUEST ACKNOWLEDGED!")
-  })
+app.post("/createUser", (req, res) => {
+  res.send("REQUEST ACKNOWLEDGED!")
+})
 
 /*app.post("/goal", (req, res) => {
   const query = `UPDATE test SET goalpassed = TRUE WHERE username = \'EmilyEmms\'; `;
