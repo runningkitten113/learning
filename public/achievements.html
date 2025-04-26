@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Statistics Page with Dropdowns</title>
+    <style>
+        /* General Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            background-color: #f2f1ec;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Navbar Logo */
+        .nav-logo {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Georgia', serif;
+            font-size: 1rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: black;
+            position: fixed;
+            left: 20px;
+            top: 10px;
+            z-index: 10;
+        }
+
+        .nav-logo span {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6bbaf1;
+            display: block;
+            line-height: 1;
+            margin-left: 17px;
+            transform: scaleX(1.3);
+            margin-top: -5px;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background-color: #f2f1ec;
+            display: flex;
+            justify-content: center; /* Centers the menu items */
+            align-items: center;
+            width: 100%;
+            padding: 20px 10px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 5;
+        }
+
+        /* Navigation Links */
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;  /* Centers the menu */
+            gap: 40px;  /* Increased gap between links */
+        }
+
+        li {
+            position: relative;
+            margin: 0;
+        }
+
+        /* Styling the links */
+        a {
+            text-decoration: none;
+            color: black;
+            padding: 10px 16px;
+            font-size: 1.2rem;
+            display: block;
+        }
+        /* Back to Dashboard Button */
+        .back-button-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end; /* Aligns the button to the right */
+            width: 100%; /* Ensures it takes full width */
+            position: absolute; /* Allows positioning relative to the navbar */
+            right: 20px; /* Moves it 20px from the right side of the screen */
+        }
+
+        .back-button {
+            background-color: #6bbaf1;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        /* To ensure space for the fixed navbar */
+        body {
+            padding-top: 80px; /* Added padding so the content doesn't overlap the navbar */
+        }
+
+        #achievements0{
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 33%;
+            position: absolute;
+            left: 30px;
+
+        }
+        #achievements1{
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 33%;
+            position: absolute;
+            left: 30px;
+            bottom: 450px;
+        }
+        #achievements2{
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 33%;
+            position: absolute;
+            left: 30px;
+            bottom: 300px;
+        }
+        #achievements3{
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 33%;
+            position: absolute;
+            left: 30px;
+            bottom: 150px;
+        }
+
+        img {
+            margin-right: 10px;
+            display: block;
+        }
+
+    </style>
+    <script src="/index.js"></script>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav id="Change">
+    <div class="nav-logo">
+        <a href="">procrasti<span>NOT</span></a>
+    </div>
+
+    <!-- Navigation Bar for Chart Types -->
+
+    <ul>
+        <!-- Chart Types Menu Item with Dropdown -->
+        <li>
+            <a href="" id="stats">Statistics</a>
+        </li>
+        <li>
+            <a href="" id="dash">Study Space</a>
+        </li>
+        <li>
+            <a href="" id="home">Home</a>
+        </li>
+    </ul>
+</nav>
+<div id="achievements-wrap">
+    <div id="achievements0"></div>
+    <br>
+    <div id="achievements1"></div>
+    <br>
+    <div id="achievements2"></div>
+    <br>
+    <div id="achievements3"></div>
+</div>
+<script>
+    try {
+        const searchParams = new URLSearchParams(window.location.search);
+        href = document.getElementById('dash').getAttribute('href');
+        href = "/dashboard.html?username=" + searchParams.get('username');
+        document.getElementById('dash').setAttribute('href', href);
+        href = document.getElementById('stats').getAttribute('href');
+        href = "/Statistics.html?username=" + searchParams.get('username');
+        document.getElementById('stats').setAttribute('href', href);
+        href = document.getElementById('home').getAttribute('href');
+        href = "/main.html";
+        document.getElementById('home').setAttribute('href', href);
+
+        getSec((col) => {
+            let sec = col.secondarycolour;
+            console.log(sec)
+            if (sec) {
+                document.body.style.backgroundColor = sec;
+                let nav = document.getElementById("Change");
+                nav.style.backgroundColor = sec;
+            }
+        })
+
+        async function getSec(callback) {
+            const searchParams = new URLSearchParams(window.location.search);
+            const user = searchParams.get("username");
+            const response = await fetch("/getSecCol", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({'username': user})
+            })
+            const json = await response.json();
+            console.log(JSON.stringify(json));
+            callback(json);
+        }
+
+        const achievementsArr = ["Clownfish", "Blue Tang", "Great White Shark", "Walking fish"]
+        const achievementDescription = ["Complete 1 goal", "Complete 1 full hour of study in 1 day", "Study for at least 3 consecutive days", "Complete 7 goals"]
+        const achievementsImgSrc = ["/Clownfish.png", "/Dory.png", "/Shark.png", "/WalkingFish.png"];
+        const achievementsImgFail = ["/Clownfish_Incomplete.png", "/Dory_Incomplete.png", "/Shark_Incomplete.png", "/WalkingFish_Incomplete.png"];
+        getAchievements((mission) => {
+            let accomplishments = [mission.achievement1, mission.achievement2, mission.achievement3, mission.achievement4];
+            for (let i = 0; i < achievementsArr.length; i++) {
+                let pDiv = document.createElement('div')
+                let p = document.createElement('p');
+                let pDesc = document.createElement('p')
+                let br = document.createElement('br');
+                let achievement = document.createTextNode(achievementsArr[i]);
+                let achievementDesc = document.createTextNode(achievementDescription[i]);
+                let achievementImg = document.createElement('img');
+                let imgDiv = document.createElement('div');
+                let achievements = document.getElementById("achievements" + i);
+                console.log(achievements);
+                if (accomplishments[i] === true) {
+                    achievementImg.src = achievementsImgSrc[i];
+                } else {
+                    achievementImg.src = achievementsImgFail[i];
+                }
+                imgDiv.appendChild(achievementImg);
+                p.style.padding = "10px";
+                p.style.fontSize = "32px";
+                pDesc.style.padding = "10px";
+                pDesc.style.fontSize = "16px";
+
+                p.appendChild(achievement)
+                p.appendChild(br)
+                pDesc.appendChild(achievementDesc)
+                pDiv.appendChild(p)
+                pDiv.appendChild(pDesc)
+                achievements.appendChild(imgDiv)
+                achievements.appendChild(pDiv);
+                document.getElementById('achievements-wrap').appendChild(achievements);
+
+            }
+        });
+
+        async function getAchievements(callback) {
+            const username = searchParams.get('username');
+            const response = await fetch(`/getAchievements`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({'username': username})
+            }).catch(err => function () {
+                window.location.href = '/error'
+            })
+            const json = await response.json();
+            console.log(JSON.stringify(json));
+            callback(json);
+        }
+    } catch(error){
+        window.location.href = '/error.html'
+    }
+</script>
+</body>
+</html>

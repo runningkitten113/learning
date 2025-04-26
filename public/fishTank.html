@@ -7,6 +7,26 @@
   <link rel="stylesheet" href="/fishTank.css">
 </head>
 <body>
+<nav id="Change">
+  <div class="nav-logo">
+    <a href="#">procrasti<span>NOT</span></a>
+  </div>
+
+  <!-- Navigation Bar for Chart Types -->
+
+  <ul>
+    <!-- Chart Types Menu Item with Dropdown -->
+    <li class="navLi">
+      <a href="" id="time">Timer</a>
+    </li>
+    <li class="navLi">
+      <a href="" id="stats">Statistics</a>
+    </li>
+    <li class="navLi">
+      <a href="" id="dash">Study Space</a>
+    </li>
+  </ul>
+</nav>
 <div class="aquarium">
   <div class="back"></div>
   <div class="left"></div>
@@ -74,27 +94,71 @@
   <div class="front"></div>
 </div>
 <script>
-  function checkGoal(callback) {
-    fetch("/isFish")
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        const dataSet = data.map(
-          user => String(`${user.goalpassed}`)
-        )
-        callback(dataSet)
-      })
-  }
+  try {
+    const searchParams = new URLSearchParams(window.location.search);
+    href = document.getElementById('dash').getAttribute('href');
+    href = "/dashboard?username=" + searchParams.get('username');
+    document.getElementById('dash').setAttribute('href', href);
+    href = document.getElementById('time').getAttribute('href');
+    href = "/timer?username=" + searchParams.get('username');
+    document.getElementById('time').setAttribute('href', href);
+    href = document.getElementById('stats').getAttribute('href');
+    href = "/stats?username=" + searchParams.get('username');
+    document.getElementById('stats').setAttribute('href', href);
 
-  let passed = false;
-  checkGoal((pass) => {
-    passed = pass;
-    if (passed == "true"){
-      alert('Goal passed');
-      document.getElementById("youmustgo").style.visibility = "visible";
+    getSec((col) => {
+      let sec = col.secondarycolour;
+      console.log(sec)
+      if (sec) {
+        document.body.style.backgroundColor = sec;
+        let nav = document.getElementById("Change");
+        nav.style.backgroundColor = sec;
+      }
+    })
+
+    async function getSec(callback) {
+      const searchParams = new URLSearchParams(window.location.search);
+      const user = searchParams.get("username");
+      const response = await fetch("/getSecCol", {
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({'username': user})
+      })
+      const json = await response.json();
+      console.log(JSON.stringify(json));
+      callback(json);
     }
-  });
+
+    async function checkGoal(callback) {
+      const username = searchParams.get('username');
+      const response = await fetch("/isFish", {
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({"username": username})
+      })
+      const json = await response.json();
+      console.log(JSON.stringify(json));
+      callback(json);
+    }
+
+    let passed = false;
+    checkGoal((pass) => {
+      passed = pass.goalpassed;
+      if (passed === true) {
+        alert('Goal passed');
+        document.getElementById("youmustgo").style.visibility = "visible";
+      }
+    });
+  } catch(error){
+    window.location.href = "/error.html";
+  }
 </script>
-<script src="index.js"></script>
+<script src="/index.js"></script>
 </body>
 </html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <style>
+    body {
+      background-color: #f2f1ec;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      text-align: center;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    .login {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    input {
+      margin: 10px 0;
+      padding: 8px;
+      width: 80%;
+      max-width: 300px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #6bbaf1;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #5aa0d3;
+    }
+    a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+  </style>
+  <script type="module" src="/index.js"></script>
+</head>
+<body>
+<div class="container">
+  <h1 style="color: #6bbaf1; font-family: Georgia;">procrastiNOT</h1>
+  <h3 style="font-family: Georgia;">Enter your login credentials</h3>
+
+  <div class="login">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" placeholder="Enter your Username" required>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" placeholder="Enter your Password" required>
+
+    <button type="submit" id="login">Submit</button>
+  </div>
+
+  <p>Not registered? <a onclick = check()>Guest account</a></p>
+   <a href="createAcc">Create account</a>
+</div>
+<script>
+  try {
+    document.getElementById('login').onclick = function () {
+      if (document.getElementById('username').value === 'Guest' && document.getElementById('password').value === 'Guest') {
+        check();
+      } else {
+        loginUsername((user) => {
+          let users = user.split(' ');
+          if (users.includes(document.getElementById('username').value)) {
+            for (let i = 0; i < users.length; i++) {
+              if (users[i].includes(document.getElementById('username').value)) {
+                loginPassword((user) => {
+                  let users = user.split(' ');
+                  if (users[i].includes(document.getElementById('password').value)) {
+                    const user = document.getElementById('username').value;
+                    window.location.href = `/dashboard?username=${user}`;
+                  } else {
+                    alert('Invalid username or password');
+                  }
+                });
+              }
+            }
+          } else {
+            alert('Invalid username or password');
+            return null;
+          }
+        });
+      }
+    }
+
+    function check() {
+      let text = confirm("Guest data will be deleted upon close, are you sure you wish to continue?");
+      if (text === false) {
+        return null;
+      } else {
+        window.location.href = "/dashboard.html?username=Guest";
+      }
+    }
+
+    async function loginUsername(callback) {
+      fetch("/username")
+              .then(response => response.json())
+              .then(data => {
+                const dataSet = data.map(
+                        user => `${user.username}`).join(' ');
+                callback(dataSet);
+              })
+    }
+
+    async function loginPassword(callback) {
+      fetch("/password")
+              .then(response => response.json())
+              .then(data => {
+                const dataSet = data.map(
+                        user => `${user.password}`).join(' ');
+                callback(dataSet);
+              })
+    }
+  } catch(error){
+    window.location.href = "/error.html"
+  }
+</script>
+</body>
+</html>

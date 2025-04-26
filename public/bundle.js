@@ -1,17 +1,32 @@
-/*import express from "./node_modules/express/index.js";
-import path from "./node_modules/path/path.js";
-import bodyParser from "./node_modules/body-parser/index.js";
-import postgres from "postgres";*/
-import config from "./sqlconfig.json" with { type: "json" };
-import express from 'express';
+import { createRequire } from 'module';
 import path from 'path';
-import bodyParser from 'body-parser';
-import postgres from "postgres";
+import postgres from 'postgres';
+import { fileURLToPath } from 'url';
 
-const __dirname = import.meta.dirname;
+var host = "24.240.181.109";
+var port$1 = 5432;
+var username = "u60136aed";
+var password = "?07VPJq9=Nn4";
+var database = "postgres";
+var schema = "s_fe80a0cc";
+var config = {
+	host: host,
+	port: port$1,
+	username: username,
+	password: password,
+	database: database,
+	schema: schema
+};
+
+const reader = new FileReader();
+const express = createRequire(reader.readAsDataURL("./node_modules/express/index.js"));
+const bodyParser = createRequire("body-parser");
 
 const app = express();
 const port = 3000;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 const sql = postgres({
   host: config.host,
@@ -20,64 +35,52 @@ const sql = postgres({
   password: config.password,
   database: config.database,
   schema: config.schema,
-} )
+} );
 
 
 app.use(express.static(path.join('')));
 app.use(bodyParser.urlencoded({ extended: false }));
-
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, 'main.html'));
-})
-
-app.get("/login", (req, res) => {
-  res.sendFile(path.join(__dirname, 'login.html'));
-})
-
-app.get("/createAcc", (req, res) => {
-  res.sendFile(path.join(__dirname, 'createAcc.html'));
-})
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 app.get("/dashboard", (req, res) => {
   res.sendFile(path.join(__dirname, 'dashboard.html'));
-})
+});
 
 app.get("/stats", (req, res) => {
   res.sendFile(path.join(__dirname, 'stats.html'));
-})
+});
 
 app.get("/timer", (req, res) => {
   res.sendFile(path.join(__dirname, 'timer.html'));
-})
+});
 
 app.get("/fish", (req, res) => {
   res.sendFile(path.join(__dirname, 'fishTank.html'));
-})
-
-app.get("/time", (req, res) => {
-  let query = `SELECT timeday1
-               FROM s_fe80a0cc.procrastiNOT
-               WHERE username = \'EmilyEmms\'`
-
-})
-
-app.get("/validate", (req, res) => {
-  const validate = async () => {
-    let query = await sql`SELECT username FROM s_fe80a0cc.procrastiNOT;`;
-    console.log(query.length)
-    let values = []
-    for (let i = 0; i < query.length; i++) {
-      values.push(query[i])
-      console.log(values)
-    }
-    res.send(values);
-  }
-  validate();
 });
 
-app.post("/createUser", (req, res) => {
-  res.send("REQUEST ACKNOWLEDGED!")
-})
+app.get("/time", (req, res) => {
+
+});
+
+  app.get("/validate", (req, res) => {
+    const validate = async () => {
+      let query = await sql`SELECT username FROM s_fe80a0cc.procrastiNOT;`;
+      console.log(query.length);
+      let values = [];
+      for (let i = 0; i < query.length; i++) {
+        values.push(query[i]);
+        console.log(values);
+      }
+      res.send(values);
+    };
+    validate();
+  });
+
+  app.post("/createUser", (req, res) => {
+    res.send("REQUEST ACKNOWLEDGED!");
+  });
 
 /*app.post("/goal", (req, res) => {
   const query = `UPDATE test SET goalpassed = TRUE WHERE username = \'EmilyEmms\'; `;
@@ -126,11 +129,3 @@ newUser()
 const schema = sql`set schema 's_fe80a0cc'`
 const a = async () => console.log(await schema.execute());
 console.log(a())*/
-
-
-
-
-
-
-
-

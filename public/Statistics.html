@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Statistics Page with Dropdowns</title>
+    <link rel="stylesheet" href="/Statistics.css">
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav id="Change">
+    <div class="nav-logo">
+        <a href="#">procrasti<span>NOT</span></a>
+    </div>
+
+<!-- Navigation Bar for Chart Types -->
+
+    <ul>
+        <!-- Chart Types Menu Item with Dropdown -->
+        <li>
+            <a href="#">Chart Types</a>
+            <div class="dropdown">
+                <a href="" id="pie">Pie Chart</a>
+                <a href="" id="bar">Bar Chart</a>
+            </div>
+        </li>
+        <li>
+            <a href="" id="achievements">Achievements</a>
+        </li>
+        <li>
+            <a href="" id="dash">Study Space</a>
+        </li>
+    </ul>
+</nav>
+
+<h1 id="intro">Your Statistics!</h1>
+<div class="stats-container">
+    <p id="stats"></p>
+</div>
+
+<p id="FootNotes">Generate graphical data using the drop-down menu labelled 'Chart Types' above!</p>
+<script>
+    try {
+        const searchParams = new URLSearchParams(window.location.search);
+        let href;
+        href= document.getElementById('pie').getAttribute('href');
+        href = "/Piechart.html?username=" + searchParams.get('username');
+        document.getElementById('pie').setAttribute('href', href);
+        href = document.getElementById('bar').getAttribute('href');
+        href = "/Barchart.html?username=" + searchParams.get('username');
+        document.getElementById('bar').setAttribute('href', href);
+        href = document.getElementById('achievements').getAttribute('href');
+        href = "/achievements.html?username=" + searchParams.get('username');
+        document.getElementById('achievements').setAttribute('href', href);
+        href = document.getElementById('dash').getAttribute('href');
+        href = "/dashboard.html?username=" + searchParams.get('username');
+        document.getElementById('dash').setAttribute('href', href);
+
+        const br = document.createElement('br');
+        const stats = document.getElementById('stats');
+        stats.textContent = "";
+        let daysStudied;
+        let hoursStudied = 0;
+        let minutesStudied = 0;
+        let secondsStudied = 0;
+        let goalsAchieved = 0;
+        let goalsAverage = 0;
+        let time = ""
+        let flag = false;
+
+
+        async function getDaysStudy(callback) {
+            const username = searchParams.get('username');
+            const response = await fetch('/getDays', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({'username': username})
+            })
+            const json = await response.json();
+            console.log(JSON.stringify(json));
+            callback(json)
+        }
+
+        async function getTimeAvg(callback) {
+            const username = searchParams.get("username")
+            const response = await fetch('/getTimeAvg', {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({"username": username})
+            })
+            const json = await response.json()
+            console.log(JSON.stringify(json))
+            callback(json)
+        }
+
+        getSec((col) => {
+            let sec = col.secondarycolour;
+            console.log(sec)
+            if (sec) {
+                document.body.style.backgroundColor = sec;
+                let nav = document.getElementById("Change");
+                nav.style.backgroundColor = sec;
+            }
+        })
+
+        async function getSec(callback) {
+            const searchParams = new URLSearchParams(window.location.search);
+            const user = searchParams.get("username");
+            const response = await fetch("/getSecCol", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({'username': user})
+            })
+            const json = await response.json();
+            console.log(JSON.stringify(json));
+            callback(json);
+        }
+
+        async function getGoalsAchieved(callback) {
+            const username = searchParams.get("username")
+            const response = await fetch('/goalsAchieved', {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({"username": username})
+            })
+            const json = await response.json()
+            console.log(JSON.stringify(json))
+            callback(json)
+        }
+
+        function getGoalsAverage() {
+            goalsAverage = goalsAchieved / daysStudied;
+            return goalsAverage;
+        }
+
+        function assembleStats() {
+            let fragment1 = 'Days studied: ' + daysStudied;
+            let fragment2 = 'Total hours studied: ' + hoursStudied;
+            let fragment3 = 'Total minutes studied: ' + minutesStudied;
+            let fragment4 = 'Total seconds studied: ' + secondsStudied;
+            let fragment5 = 'Goals achieved: ' + goalsAchieved;
+            let fragment6 = 'Goal completion: ' + (100 * goalsAverage) + "%";
+            let para = document.getElementById('stats');
+            para.innerHTML = fragment1 + "<br><br>" + fragment2 + "<br><br>" + fragment3 + "<br><br>" + fragment4 + "<br><br>" + fragment5 + "<br><br>" + fragment6;
+            para.style = "font-size: 32px";
+            console.log(para)
+        }
+
+        getDaysStudy((study) => {
+            daysStudied = study.totaldays
+            console.log(daysStudied);
+            if (daysStudied > 0) {
+                getTimeAvg((AvgTime) => {
+                    time = (AvgTime.averagetime)
+                    time *= daysStudied;
+                    console.log(time)
+                    hoursStudied = (time - (time % 3600000)) / 3600000
+                    minutesStudied = (time - (time % 60000)) / 60000
+                    secondsStudied = (time - (time % 1000)) / 1000
+                    getGoalsAchieved((numGoals) => {
+                        goalsAchieved = numGoals.goalcompletion;
+                        goalsAverage = getGoalsAverage();
+                        assembleStats();
+                    });
+                })
+
+
+            } else {
+                alert("You have not studied yet. Please use the timer to study before viewing your statistics.");
+
+            }
+        });
+        console.log(daysStudied);
+        if (!flag) {
+            console.log(daysStudied);
+
+        } else {
+            alert("You have not studied yet. Please use the timer to study before viewing your statistics.");
+        }
+    } catch(error){
+        window.location.href = "/error.html";
+    }
+
+</script>
+</body>
+</html>
+
+<!-- Homepage Button
+<div class="back-button-container">
+    <a href="index.html" class="back-button">Home</a>
+</div>
+</nav>
+-->
+
+
+

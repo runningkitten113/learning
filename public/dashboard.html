@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Space Layout</title>
+    <link rel="stylesheet" href="/dashboard.css">
+    <link rel="shortcut icon" href="">
+</head>
+
+<body>
+    <!-- Using for displaying the tasks
+    <div class="layout tasks">
+        <h1>Tasks List</h1>
+
+        <div id="list"></div>
+
+        <p id="countingValue">Task Count: 0</p>
+        <p id="celebration"></p>
+
+        <div id="form">
+            <input type="text" id="taskName" placeholder="Enter Task">
+            <button type="submit" id="addTask" onclick="addTask()">Add Task</button>
+            <button id="clearTask" onclick="clearTasks()">Clear Tasks</button>
+        </div>
+    </div>
+    -->
+
+    <div class="main-container">
+
+        <!-- Used for the timer -->
+        <div class="layout timer">
+            <h1>Timer</h1>
+            <img src="/Timer.png" alt="Study Timer" id="timerImg" />
+        </div>
+
+        <!-- Used for displaying the statistics -->
+        <div class="layout stats">
+            <h1>Stats</h1>
+            <img src="/Statistics.png" alt="Statistics" id="statsImg" />
+        </div>
+
+        <!-- Used for the Aquarium -->
+        <div class="layout aquarium">
+            <h1>Fish Tank</h1>
+            <img src="/Aquarium.png" alt="Aquarium Tank with fish" id="fishImg" />
+        </div>
+
+        <!-- Using for displaying the tasks -->
+        <div class="layout tasks">
+            <h1>Tasks List</h1>
+            <div id="list"></div>
+            <p id="countingValue">Task Count: 0</p>
+            <p id="celebration"></p>
+            <div id="form">
+                <input type="text" id="taskName" placeholder="Enter Task" />
+                <button type="submit" onclick="addTask(event)">Add Task</button>
+                <button onclick="clearTasks(event)">Clear Tasks</button>
+            </div>
+        </div>
+
+        <div class="bottom-buttons">
+            <div class="home-box">
+                <div class="home">
+                    <span class="home-text">Home</span>
+                </div>
+            </div>
+            <div class="theme-box">
+                <div class="theme" id="">
+                    <span class="theme-text">Theme</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/dashboard.js" defer></script>
+    <script src="/Theme.js" defer></script>
+    <script src="/index.js" defer></script>
+    <script>
+        try {
+            getPrim((col) => {
+                let prim = col.primarycolour;
+                if (prim) {
+                    document.querySelectorAll(".layout, .home-box, .theme-box").forEach(el => {
+                        el.style.backgroundColor = prim;
+                    })
+                }
+            })
+
+            getSec((col) => {
+                let sec = col.secondarycolour;
+                if (sec) {
+                    document.body.style.backgroundColor = sec;
+                }
+            })
+
+            async function getPrim(callback) {
+                const searchParams = new URLSearchParams(window.location.search);
+                const user = searchParams.get("username");
+                const response = await fetch("/getPrimCol", {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({'username': user})
+                })
+                const json = await response.json();
+                console.log(JSON.stringify(json));
+                callback(json);
+            }
+
+            async function getSec(callback) {
+                const searchParams = new URLSearchParams(window.location.search);
+                const user = searchParams.get("username");
+                const response = await fetch("/getSecCol", {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({'username': user})
+                })
+                const json = await response.json();
+                console.log(JSON.stringify(json));
+                callback(json);
+            }
+
+            document.getElementById("timerImg").onclick = function () {
+                const searchParams = new URLSearchParams(window.location.search);
+                const user = searchParams.get("username");
+                window.location.href = "/timer.html?username=" + user;
+            }
+
+            document.getElementById("fishImg").onclick = function () {
+                const searchParams = new URLSearchParams(window.location.search);
+                const user = searchParams.get("username");
+                window.location.href = "/fishTank.html?username=" + user;
+            }
+
+            document.getElementById("statsImg").onclick = function () {
+                const searchParams = new URLSearchParams(window.location.search);
+                const user = searchParams.get("username");
+                window.location.href = "/Statistics.html?username=" + user;
+            }
+
+            document.getElementsByClassName("home-box").onclick = function () {
+                const searchParams = new URLSearchParams(window.location.search);
+                const user = searchParams.get("username");
+                if (user === "Guest") {
+                    let text = confirm("Guest account data will be lost. Do you want to continue?");
+                    if (text === true) {
+                        clearGuest();
+                        window.location.href = "/main.html";
+                    }
+                }
+            }
+            themeBtn = document.querySelector(".theme-box");
+            themeBtn.onclick = function () {
+                function checkCol() {
+                    if (themeBtn.id.includes("Prim")) {
+                        let text = themeBtn.id.split(" ")
+                        let colour = text[1]
+                        prim(colour)
+                        clearInterval(check)
+                    } else if (themeBtn.id.includes("Sec")) {
+                        let text = themeBtn.id.split(" ")
+                        let colour = text[1]
+                        sec(colour)
+                        clearInterval(check)
+                    } else if (themeBtn.id === "Cancel") {
+                        clearInterval(check)
+                    }
+                }
+
+                const check = setInterval(checkCol, 1000);
+            }
+
+            async function prim(colour) {
+                const searchParams = new URLSearchParams(window.location.search);
+                const username = searchParams.get("username");
+                const response = await fetch('/setPrimCol', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({'username': username, 'colour': colour}),
+                })
+                const json = await response.json();
+                console.log(JSON.stringify(json));
+            }
+
+            async function sec(colour) {
+                const searchParams = new URLSearchParams(window.location.search);
+                const username = searchParams.get("username");
+                const response = await fetch('/setSecCol', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({'username': username, 'colour': colour}),
+                })
+                const json = await response.json();
+                console.log(JSON.stringify(json));
+            }
+
+            async function clearGuest() {
+                const response = await fetch("/clearGuest")
+                const json = await response.json()
+                console.log(JSON.stringify(json))
+            }
+        } catch(error){
+            window.location.href = "/error.html"
+        }
+    </script>
+</body>
+</html>

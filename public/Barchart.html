@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Statistics Page with Dropdowns</title>
+  <style>
+    /* General Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+      background-color: #f2f1ec;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Navbar Logo */
+    .nav-logo {
+      display: flex;
+      flex-direction: column;
+      font-family: 'Georgia', serif;
+      font-size: 1rem;
+      font-weight: bold;
+      text-decoration: none;
+      color: black;
+      position: fixed;
+      left: 20px;
+      top: 10px;
+      z-index: 10;
+    }
+
+    .nav-logo span {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #6bbaf1;
+      display: block;
+      line-height: 1;
+      margin-left: 17px;
+      transform: scaleX(1.3);
+      margin-top: -5px;
+    }
+
+    /* Navigation Bar */
+    nav {
+      background-color: #f2f1ec;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;  /* Centers the menu */
+      align-items: center;
+      width: 100%;
+      padding: 20px 10px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 5;
+    }
+
+    /* Navigation Links */
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      gap: 10px;
+    }
+
+    li {
+      position: relative;
+      margin: 0 10px;
+    }
+
+    /* Styling the links */
+    a {
+      text-decoration: none;
+      color: black;
+      padding: 10px 16px;
+      font-size: 1.2rem;
+      display: block;
+    }
+
+    /* Dropdown Menu */
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 35px; /* Space from the Bar Chart link */
+      left: 50%; /* Center the dropdown horizontally */
+      transform: translateX(-50%); /* Center the dropdown under the parent */
+      background: #f2f1ec;
+      border-radius: 5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 10px 0;
+      min-width: 180px;  /* Increased width */
+      text-align: center;
+    }
+
+    .dropdown a {
+      padding: 12px 20px;
+      display: block;
+      color: black;
+      font-size: 1.2rem;
+    }
+
+    .dropdown a:hover {
+      background-color: #f0f0f0;
+      color: #6bbaf1;
+    }
+
+    /* Show dropdown on hover */
+    li:hover .dropdown {
+      display: block;
+    }
+
+    /* Back to Dashboard Button */
+    .back-button-container {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end; /* Aligns the button to the right */
+      width: 100%; /* Ensures it takes full width */
+      position: absolute; /* Allows positioning relative to the navbar */
+      right: 20px; /* Moves it 20px from the right side of the screen */
+    }
+
+    .back-button {
+      background-color: #6bbaf1;
+      color: white;
+      padding: 10px 20px;
+      font-size: 1.2rem;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+
+    /* To ensure space for the fixed navbar */
+    body {
+      padding-top: 130px; /* Added padding so the content doesn't overlap the navbar */
+    }
+
+    /* Center the Bar Chart dropdown at the top of the page */
+    .centered-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin-top: 50px; /* Move Bar Chart up */
+    }
+
+    .reload{
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      width: 100%;
+      bottom: 50px;
+    }
+
+    #reload{
+      display: flex;
+      background-color: #6bbaf1;
+      color: white;
+      padding: 10px 20px;
+      font-size: 1.2rem;
+      border-radius: 5px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script scr="/index.js"></script>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav>
+  <div class="nav-logo">
+    <a href="#">procrasti<span>NOT</span></a>
+  </div>
+
+<!-- Centered Bar Chart Dropdown -->
+  <div class="centered-nav">
+    <ul>
+    <!-- Bar Chart Menu Item with Dropdown -->
+      <li>
+        <a href="">Y-axis Scale</a>
+        <div class="dropdown">
+          <a href="" id="Minutes">Minutes</a>
+          <a href="" id="Hours">Hours</a>
+        </div>
+      </li>
+      <li>
+        <a id="pie">Pie Chart</a>
+      </li>
+      <li>
+        <a id="stats">Statistics</a>
+      </li>
+      <li>
+        <a id="home">Home</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+
+<div>
+  <canvas id="myChart" width="600" height="600"></canvas>
+</div>
+
+<div class="reload">
+  <button id="reload">Reload</button>
+</div>
+
+<script>
+  try{
+  const searchParams = new URLSearchParams(window.location.search);
+  href = document.getElementById('pie').getAttribute('href');
+  href = "/pie?username=" + searchParams.get('username');
+  document.getElementById('pie').setAttribute('href', href);
+  href = document.getElementById('stats').getAttribute('href');
+  href = "/stats?username=" + searchParams.get('username');
+  document.getElementById('stats').setAttribute('href', href);
+  href = document.getElementById('home').getAttribute('href');
+  href = "/home";
+  document.getElementById('home').setAttribute('href', href);
+  const ctx = document.getElementById('myChart');
+
+  async function getTimesWeek(callback){
+    const username = searchParams.get('username');
+    const response = await fetch('/time', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({'username': username})
+    })
+    const json = await response.json();
+    console.log(JSON.stringify(json));
+    callback(json)
+  }
+
+  function toMinutes(time){
+    if (!time){return 0}
+    else {
+      time = time.split(':')
+      let hours = Number(time[0]) * 60
+      let minutes = Number(time[1])
+      let seconds = Number(time[2]) /60
+      time = Number(hours) + Number(minutes) + Number(seconds)
+      return time
+    }
+  }
+
+  function toHours(time){
+    if (!time){return 0}
+    else {
+      time = time.split(':')
+      let hours = Number(time[0])
+      let minutes = Number(time[1]) /60
+      let seconds = Number(time[2]) /3600
+      time = Number(hours) + Number(minutes) + Number(seconds)
+      return time
+    }
+  }
+
+  document.getElementById("Minutes").onclick = function(event) {
+    event.preventDefault();
+    getTimesWeek((times) => {
+      times.timeday1 = toMinutes(times.timeday1)
+      times.timeday2 = toMinutes(times.timeday2)
+      times.timeday3 = toMinutes(times.timeday3)
+      times.timeday4 = toMinutes(times.timeday4)
+      times.timeday5 = toMinutes(times.timeday5)
+      times.timeday6 = toMinutes(times.timeday6)
+      times.timeday7 = toMinutes(times.timeday7)
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: [
+            'Day 1',
+            'Day 2',
+            'Day 3',
+            'Day 4',
+            'Day 5',
+            'Day 6',
+            'Day 7'
+          ],
+          datasets: [{
+            label: 'Time studied in minutes',
+            data: [times.timeday1, times.timeday2, times.timeday3, times.timeday4, times.timeday5, times.timeday6, times.timeday7],
+            backgroundColor: [
+              'rgb(107, 187, 241)',
+              'rgb(255, 27, 86)',
+              'rgb(107, 187, 241)',
+              'rgb(255, 27, 86)',
+              'rgb(107, 187, 241)',
+              'rgb(255, 27, 86)',
+              'rgb(107, 187, 241)'
+            ],
+            hoverOffset: 4
+          }]
+        }
+      })
+
+    })
+  }
+
+  document.getElementById("Hours").onclick = function(event) {
+    event.preventDefault();
+    getTimesWeek((times) => {
+      times.timeday1 = toHours(times.timeday1)
+      times.timeday2 = toHours(times.timeday2)
+      times.timeday3 = toHours(times.timeday3)
+      times.timeday4 = toHours(times.timeday4)
+      times.timeday5 = toHours(times.timeday5)
+      times.timeday6 = toHours(times.timeday6)
+      times.timeday7 = toHours(times.timeday7)
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: [
+            'Day 1',
+            'Day 2',
+            'Day 3',
+            'Day 4',
+            'Day 5',
+            'Day 6',
+            'Day 7'
+          ],
+          datasets: [{
+            label: 'Time studied in hours',
+            data: [times.timeday1, times.timeday2, times.timeday3, times.timeday4, times.timeday5, times.timeday6, times.timeday7],
+            backgroundColor: [
+              'rgb(107, 187, 241)',
+              'rgb(255, 27, 86)',
+              'rgb(107, 187, 241)',
+              'rgb(255, 27, 86)',
+              'rgb(107, 187, 241)',
+              'rgb(255, 27, 86)',
+              'rgb(107, 187, 241)'
+            ],
+            hoverOffset: 4
+          }]
+        },
+      })
+    })
+  }
+  document.getElementById("reload").onclick = function() {
+    window.location.reload()
+  }
+  } catch(error){
+    window.location.href = '/error.html'
+  }
+</script>
+</body>
+</html>
+
+<!-- Homepage Button
+<div class="back-button-container">
+  <a href="index.html" class="back-button">Home</a>
+</div>
+</nav>
+-->

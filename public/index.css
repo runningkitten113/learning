@@ -648,7 +648,7 @@ li:hover .dropdown {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 7px;
         max-width: 500px;
-        margin-left: -3%;
+        margin-left: -150px;
         margin-right: auto;
         text-align: left;
         margin-top: -30px;
@@ -664,7 +664,7 @@ li:hover .dropdown {
         background-color: black;
         margin-top: -300px;
         margin-bottom: 20px;
-        margin-left: -20px;
+        margin-left: -150px;
         margin-right: auto;
         position: relative;
         top: -20px;
