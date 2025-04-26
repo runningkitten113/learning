@@ -64,7 +64,7 @@
   </div>
 
   <p>Not registered? <a onclick = check()>Guest account</a></p>
-   <a href="createAcc">Create account</a>
+   <a href="/createAcc.html">Create account</a>
 </div>
 <script>
   try {
@@ -81,7 +81,7 @@
                   let users = user.split(' ');
                   if (users[i].includes(document.getElementById('password').value)) {
                     const user = document.getElementById('username').value;
-                    window.location.href = `/dashboard?username=${user}`;
+                    window.location.href = `/dashboard.html?username=${user}`;
                   } else {
                     alert('Invalid username or password');
                   }
@@ -101,8 +101,18 @@
       if (text === false) {
         return null;
       } else {
-        window.location.href = "/dashboard.html?username=Guest";
+        guestAchievement((bruh) => {
+          let no = bruh;
+          window.location.href = "/dashboard.html?username=Guest";
+        })
       }
+    }
+
+    async function guestAchievement(callback) {
+      const response = await fetch("/GuestAchievement")
+      const json = response.json()
+      console.log(JSON.stringify(json))
+      callback(json)
     }
 
     async function loginUsername(callback) {

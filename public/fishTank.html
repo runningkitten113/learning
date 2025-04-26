@@ -97,13 +97,13 @@
   try {
     const searchParams = new URLSearchParams(window.location.search);
     href = document.getElementById('dash').getAttribute('href');
-    href = "/dashboard?username=" + searchParams.get('username');
+    href = "/dashboard.html?username=" + searchParams.get('username');
     document.getElementById('dash').setAttribute('href', href);
     href = document.getElementById('time').getAttribute('href');
-    href = "/timer?username=" + searchParams.get('username');
+    href = "/timer.html?username=" + searchParams.get('username');
     document.getElementById('time').setAttribute('href', href);
     href = document.getElementById('stats').getAttribute('href');
-    href = "/stats?username=" + searchParams.get('username');
+    href = "/Statistics.html?username=" + searchParams.get('username');
     document.getElementById('stats').setAttribute('href', href);
 
     getSec((col) => {

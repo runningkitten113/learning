@@ -156,22 +156,50 @@
             console.log(para)
         }
 
+        async function getTime(callback) {
+            const username = searchParams.get("username")
+            const response = await fetch('/time', {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({"username": username})
+            })
+            const json = await response.json()
+            console.log(JSON.stringify(json))
+            callback(json)
+        }
+
         getDaysStudy((study) => {
             daysStudied = study.totaldays
             console.log(daysStudied);
             if (daysStudied > 0) {
                 getTimeAvg((AvgTime) => {
-                    time = (AvgTime.averagetime)
-                    time *= daysStudied;
+                    getTime((times) => {
+                        let time1 = times.timeday1;
+                        let theTime = AvgTime.averagetime
+                        if (!theTime){
+                            time1 = time1.split(':')
+                            let hrs = Number(time1[0])*3600000
+                            let mins = Number(time1[1])*60000
+                            let secs = Number(time1[2])*1000
+                            time = Number(hrs) + Number(mins) + Number(secs)
+                        } else {
+                            time = (AvgTime.averagetime)
+                            time *= daysStudied;
+                        }
                     console.log(time)
                     hoursStudied = (time - (time % 3600000)) / 3600000
                     minutesStudied = (time - (time % 60000)) / 60000
                     secondsStudied = (time - (time % 1000)) / 1000
-                    getGoalsAchieved((numGoals) => {
+                    getGoalsAchieved((numGoals) =>
+                    {
                         goalsAchieved = numGoals.goalcompletion;
                         goalsAverage = getGoalsAverage();
                         assembleStats();
-                    });
+                        })
+                    })
                 })
 
 

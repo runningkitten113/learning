@@ -60,7 +60,7 @@
         </div>
 
         <div class="bottom-buttons">
-            <div class="home-box">
+            <div class="home-box" id="GOHOME">
                 <div class="home">
                     <span class="home-text">Home</span>
                 </div>
@@ -145,15 +145,17 @@
                 window.location.href = "/Statistics.html?username=" + user;
             }
 
-            document.getElementsByClassName("home-box").onclick = function () {
+            document.getElementById("GOHOME").onclick = function () {
                 const searchParams = new URLSearchParams(window.location.search);
                 const user = searchParams.get("username");
                 if (user === "Guest") {
                     let text = confirm("Guest account data will be lost. Do you want to continue?");
                     if (text === true) {
                         clearGuest();
-                        window.location.href = "/main.html";
+                        window.location.href = "/index.html";
                     }
+                } else {
+                    window.location.href = "/index.html";
                 }
             }
             themeBtn = document.querySelector(".theme-box");

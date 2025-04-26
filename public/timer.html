@@ -143,7 +143,6 @@
       let day = 0;
 
       async function getGoal(callback) {
-        console.log("Fuck you")
         const username = searchParams.get('username');
         const response = await fetch('/getGoal', {
           method: 'POST',
@@ -159,7 +158,6 @@
       }
 
       async function newToday(today) {
-        console.log("wa");
         const username = searchParams.get("username")
         const response = await fetch('/newDay', {
           method: "POST",
@@ -175,7 +173,6 @@
 
 
       async function getToday(callback) {
-        console.log("getToday")
         const username = searchParams.get('username');
         const response = await fetch("/today", {
           method: "POST",
@@ -254,7 +251,6 @@
 
       async function goalToDB(goal) {
         const username = searchParams.get('username');
-        console.log("goalToDB");
         const response = await fetch("/setGoal", {
           method: "POST",
           headers: {
@@ -288,8 +284,6 @@
       }
 
       document.getElementById("DropDownButton").onclick = function () {
-        console.log(goal);
-        console.log(today);
         if (goal === 0) {
           let dropdowns = document.getElementsByClassName("dropdown-content");
           let i;
@@ -327,13 +321,7 @@
       let timePassed = 0;
       getToday((date) => {
         today = date.today;
-        console.log(today);
-        console.log(Date.now())
-        let nextDay = today + 86400000
-        let diff = Date.now() - nextDay
-        console.log(diff);
         if (((Number(today) + Number(86400000)) < Date.now()) || (today === null)) {
-          console.log("Got today");
           today = (Date.now() - (Date.now() % 86400000))
           newToday(today)
           newDay = true;
@@ -341,9 +329,7 @@
       })
 
       getGoal((target) => {
-        console.log(target.goaltime)
         goal = target.goaltime
-        console.log(goal)
       })
 
       getTime((time) => {
@@ -538,12 +524,8 @@
 
           function progressBar() {
             let r = document.querySelector(':root');
-            console.log(milliseconds + " milliseconds")
-            console.log(goal + " goal")
             let val = milliseconds / goal;
-            console.log(val + " milliseconds/goal");
             let deciVal = Math.trunc(val * 10000)
-            console.log(deciVal);
             if (deciVal / 100 >= 100) {
               document.getElementById("button").textContent = ('100%');
               val = 0;
@@ -567,8 +549,6 @@
         }
 
         async function pause() {
-          console.log("pause");
-          console.log(day + " out of time")
           const username = searchParams.get("username")
           const response = await fetch("/pause", {
             method: "POST",

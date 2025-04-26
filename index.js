@@ -110,8 +110,11 @@ app.get("/error", (req, res) => {
     const {username, password} = req.body;
     console.log(username, password);
     const create = async ({username, password}) => {
-      let query = await sql`INSERT INTO s_fe80a0cc.procrastiNOT (username, password)
+      let query;
+      query = await sql`INSERT INTO s_fe80a0cc.procrastiNOT (username, password)
                             VALUES (${username}, ${password});`;
+      query = await sql`INSERT INTO s_fe80a0cc.achievements (username, achievement1, achievement2, achievement3, achievement4)
+                            VALUES (${username}, false, false, false, false)`
       console.log("Thingy happened")
     }
     create({username, password})
@@ -257,13 +260,12 @@ app.post("/getPrimCol", (req, res) => {
   app.get("/clearGuest", (req, res) => {
     const clearGuestUser = async () => {
       let query;
+      query = await sql`delete from s_fe80a0cc.achievements where username = 'Guest'`
       query = await sql`delete
                         from s_fe80a0cc.tasks
                         where username = 'Guest';`
       query = await sql`delete
                         from s_fe80a0cc.procrastiNOT
-                        where username = 'Guest';`
-      query = await sql`insert into s_fe80a0cc.procrastiNOT
                         where username = 'Guest';`
     }
     clearGuestUser()
@@ -352,6 +354,18 @@ app.post("/getPrimCol", (req, res) => {
     goalsAchieved({username})
   })
 
+app.get("/GuestAchievement", (req, res) => {
+  const makeAchieves = async() =>{
+    let query;
+    query = await sql`Insert into s_fe80a0cc.achievements (username, achievement1, achievement2, achievement3, achievement4)
+values ('Guest', false, false, false, false)`
+    query = await sql`insert into s_fe80a0cc.procrastiNOT (username, password)
+                         values('Guest', 'Guest');`
+    res.send(query[0])
+  }
+  makeAchieves()
+})
+
   app.post("/pause", (req, res) => {
     console.log("Paws")
     const {username, time, day} = req.body;
@@ -437,6 +451,10 @@ app.post("/getPrimCol", (req, res) => {
       query = await sql`select goalcompletion from s_fe80a0cc.procrastiNOT where username = ${username}`
       let numGoals = query[0].goalcompletion
       numGoals = numGoals + 1;
+      query = await sql`SELECT achievement1 from s_fe80a0cc.achievements where username = ${username}`
+      if (numGoals === 1 && query[0].achievement1 === false){
+        query = await sql`update s_fe80a0cc.achievements set achievement1 = true where username = ${username}`
+      }
       query = await sql`UPDATE s_fe80a0cc.procrastiNOT
                             SET goalpassed = TRUE, goalcompletion = ${numGoals}
                             WHERE username = ${username}; `;
