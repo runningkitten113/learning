@@ -8,11 +8,10 @@
 <!-- Navigation Bar -->
 <nav id="Change">
     <div class="nav-logo">
-        <a href="#">procrasti<span>NOT</span></a>
+        <a href="">procrasti<span>NOT</span></a>
     </div>
 
-<!-- Navigation Bar for Chart Types -->
-
+    <!-- Navigation Bar for Chart Types -->
     <ul>
         <!-- Chart Types Menu Item with Dropdown -->
         <li>
@@ -33,7 +32,13 @@
 
 <h1 id="intro">Your Statistics!</h1>
 <div class="stats-container">
-    <p id="stats"></p>
+    <!-- Display Statistics -->
+    <p id="total-days">Total days studied: <span id="days">0</span></p><br />
+    <p id="total-hours">Total hours studied: <span id="hours">0</span></p><br />
+    <p id="total-minutes">Total minutes studied: <span id="minutes">0</span></p><br />
+    <p id="total-seconds">Total seconds studied: <span id="seconds">0</span></p><br />
+    <p id="goals-achieved">Goals achieved: <span id="goals">0</span></p><br />
+    <p id="goal-completion">Goals completion: <span id="completion">0%</span></p><br />
 </div>
 
 <p id="FootNotes">Generate graphical data using the drop-down menu labelled 'Chart Types' above!</p>
@@ -54,9 +59,7 @@
         href = "/dashboard.html?username=" + searchParams.get('username');
         document.getElementById('dash').setAttribute('href', href);
 
-        const br = document.createElement('br');
-        const stats = document.getElementById('stats');
-        stats.textContent = "";
+
         let daysStudied;
         let hoursStudied = 0;
         let minutesStudied = 0;
@@ -144,16 +147,12 @@
         }
 
         function assembleStats() {
-            let fragment1 = 'Days studied: ' + daysStudied;
-            let fragment2 = 'Total hours studied: ' + hoursStudied;
-            let fragment3 = 'Total minutes studied: ' + minutesStudied;
-            let fragment4 = 'Total seconds studied: ' + secondsStudied;
-            let fragment5 = 'Goals achieved: ' + goalsAchieved;
-            let fragment6 = 'Goal completion: ' + (100 * goalsAverage) + "%";
-            let para = document.getElementById('stats');
-            para.innerHTML = fragment1 + "<br><br>" + fragment2 + "<br><br>" + fragment3 + "<br><br>" + fragment4 + "<br><br>" + fragment5 + "<br><br>" + fragment6;
-            para.style = "font-size: 32px";
-            console.log(para)
+            document.getElementById('days').textContent =  daysStudied;
+            document.getElementById('hours').textContent = hoursStudied;
+            document.getElementById('minutes').textContent = minutesStudied;
+            document.getElementById('seconds').textContent = secondsStudied;
+            document.getElementById('goals').textContent = goalsAchieved;
+            document.getElementById('completion').textContent = (100 * goalsAverage) + "%";
         }
 
         async function getTime(callback) {

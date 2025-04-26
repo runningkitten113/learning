@@ -2,17 +2,25 @@ import express from 'express';
 import path from 'path';
 import bodyParser from 'body-parser';
 import postgres from "postgres";
+import config from "./sqlconfig.json" with {type: "json"};
 
 const __dirname = import.meta.dirname;
 const app = express();
 // Serve static files from the 'public' directoryapp.use(express.static(path.join(__dirname, 'public')));
 const port = 3000
+/*
 const dbHost = process.env.DB_HOST;
 const dbPort = process.env.DB_PORT || 5432;
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASSWORD;
 const dbDatabase = process.env.DB_DATABASE;
-const dbSchema = process.env.DB_SCHEMA;
+const dbSchema = process.env.DB_SCHEMA;*/
+const dbHost = process.env.DB_HOST || config.host;
+const dbPort = process.env.DB_PORT || 5432;
+const dbUser = process.env.DB_USER || config.username;
+const dbPassword = process.env.DB_PASSWORD || config.password;
+const dbDatabase = process.env.DB_DATABASE || config.database;
+const dbSchema = process.env.DB_SCHEMA || config.schema;
 
   const sql = postgres({
     host: dbHost,
@@ -272,6 +280,7 @@ app.post("/getPrimCol", (req, res) => {
       query = await sql`delete
                         from s_fe80a0cc.procrastiNOT
                         where username = 'Guest';`
+      res.send({thing: "done"})
     }
     clearGuestUser()
   })
@@ -366,7 +375,7 @@ app.get("/GuestAchievement", (req, res) => {
 values ('Guest', false, false, false, false)`
     query = await sql`insert into s_fe80a0cc.procrastiNOT (username, password)
                          values('Guest', 'Guest');`
-    res.send(query[0])
+    res.send({thingy: "Done"})
   }
   makeAchieves()
 })

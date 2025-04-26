@@ -37,7 +37,7 @@ body {
 
 /* Navigation Bar */
 nav {
-    background-color: #f2f1ec;
+    background-color: transparent;  /* Removed the background color */
     display: flex;
     justify-content: center;  /* Centers the menu */
     align-items: center;
@@ -48,6 +48,7 @@ nav {
     left: 0;
     z-index: 5; /* Lower z-index to ensure logo is above */
 }
+
 
 /* Navigation Links */
 ul {
@@ -132,30 +133,81 @@ body {
 
 #intro {
     display: flex;
+    margin-top: 50px;  /* Adjust margin for better positioning */
+    font-size: 36px;  /* Increase font size for better visibility */
+    text-align: center;  /* Center the title */
+    width: 100%;  /* Ensure it spans the full width */
+    justify-content: center;  /* Center the text */
 }
 
+/* Container for statistics and achievements */
 .stats-container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    position: absolute;
-    left: 30px;
-    bottom: 100px;
+    display: grid;
+    align-items: flex-start; /* Align them to the top */
+    justify-content: space-between;  /* Space between statistics and achievements */
+    width: 94%;
+    position: relative;  /* Reset the absolute positioning */
+    top: 20px;  /* Add some space from the top */
 }
 
+/* Style for the statistics */
 .stats {
     display: flex;
     flex-direction: column;
     font-size: 32px;
 }
 
-br {
-    margin-bottom: 15px;
+/* Adjustments for smaller screens */
+@media screen and (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        align-items: center;
+        top: 70px;
+        padding: 15px 5px;
+    }
+
+    ul {
+        flex-direction: row;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    li {
+        margin: 0 5px;
+    }
+
+    .dropdown {
+        top: 40px;
+    }
+
+    /* Ensure "Your Statistics!" is visible on smaller screens */
+    #intro {
+        font-size: 30px;  /* Adjust font size for smaller screens */
+        text-align: center;
+        width: 100px;  /* Make it span the full width */
+        margin-bottom: 20px;
+    }
+
+    /* Adjust Stats Layout for Smaller Screens */
+    .stats-container {
+        display: grid;
+        gap: 15px;  /* Space between the items */
+        width: 90%;  /* Adjust width to avoid overflow */
+        position: relative;  /* Reset the absolute positioning */
+        top: -30px;  /* Add some space from top */
+        margin-left: 28px;  /* Align stats to the left */
+    }
+
+    /* Adjust font size and layout inside stats */
+    .stats p {
+        font-size: 18px;  /* Smaller font size */
+    }
 }
 
 #FootNotes {
     display: flex;
-    top: 20px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
     opacity: 70%;
 }

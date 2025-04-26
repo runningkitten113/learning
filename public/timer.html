@@ -284,15 +284,8 @@
       }
 
       document.getElementById("DropDownButton").onclick = function () {
-        if (goal === 0) {
-          let dropdowns = document.getElementsByClassName("dropdown-content");
-          let i;
-          for (i = 0; i < dropdowns.length; i++) {
-            let openDropdown = dropdowns[i];
-            if (openDropdown.classList.contains('show')) {
-              openDropdown.classList.remove('show');
-            }
-          }
+        if (!goal) {
+          targetTime()
         } else {
           let targetHrs = (goal - (goal % 3600000)) / 3600000;
           let targetmins = (goal - (targetHrs * 3600000) - (goal % 60000)) / 60000
@@ -328,9 +321,6 @@
         }
       })
 
-      getGoal((target) => {
-        goal = target.goaltime
-      })
 
       getTime((time) => {
         const days = time;
@@ -459,118 +449,125 @@
       let resumeTime;
 
       function button_click() {
-        document.getElementById("myCircle").style.display = "flex"
-        if ((!(goal == 0)) && !(breakForce)) {
-          if (!paused) {
-            paused = true;
-            unPausedTime = Date.now() - resumeTime;
-            timePassed = (Date.now() - startTime);
-            console.log(timePassed + " TP")
-            pause()
-            clearInterval(timer);
-            alert("Timer has been paused")
-          } else {
-            paused = false;
-            resumeTime = Date.now()
-            startTime = Date.now() - timePassed;
-            console.log(startTime + " ST")
-            timer = setInterval(Timer, 1000);
+        getGoal((target) => {
+          goal = target.goaltime
+          if (!goal) {
+            goal = 0
           }
-        } else {
-          if (breakForce) {
-            setTimeout(endBreak, 600000);
-          } else {
-            alert("No goal has been set, please use the drop-down menu to set a goal");
-          }
-        }
-
-
-        function Timer() {
-          timePassed = (Date.now() - startTime);
-          unPausedTime = Date.now() - resumeTime;
-          if ((timePassed > goal) && !passGoal) {
-            let x = document.getElementById("GoalAudio");
-            x.volume = 0.35;
-            x.play();
-            passGoal = true;
-            passedGoal();
-
-            async function passedGoal() {
-              const username = searchParams.get("username")
-              const response = await fetch("/goal", {
-                method: "POST",
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({"username": username})
-              });
-            }
-          }
-
-          if (unPausedTime >= (3600 * 1000)) {
-            clearInterval(timer);
-            breakForce = true;
-            paused = true;
-            unPausedTime = Date.now() - resumeTime;
-            timePassed = (Date.now() - startTime);
-            alert("You must take a break for at least 10 minutes, timer has been paused")
-            return 0;
-          }
-          let hours = Math.floor(timePassed / 3600000)
-          let minutes = Math.floor((timePassed - (hours * 3600000)) / 60000)
-          let seconds = Math.floor((timePassed - (hours * 3600000) - (minutes * 60000)) / 1000)
-          let milliseconds = timePassed
-
-          function progressBar() {
-            let r = document.querySelector(':root');
-            let val = milliseconds / goal;
-            let deciVal = Math.trunc(val * 10000)
-            if (deciVal / 100 >= 100) {
-              document.getElementById("button").textContent = ('100%');
-              val = 0;
-              r.style.setProperty('--percent', val.toString());
+          document.getElementById("myCircle").style.display = "flex"
+          if (goal && !(breakForce)) {
+            if (!paused) {
+              paused = true;
+              unPausedTime = Date.now() - resumeTime;
+              timePassed = (Date.now() - startTime);
+              console.log(timePassed + " TP")
+              pause()
+              clearInterval(timer);
+              alert("Timer has been paused")
             } else {
-              document.getElementById("button").textContent = ((deciVal / 100).toString() + '%');
-              val = 1727 - (1727 * val);
-              r.style.setProperty('--percent', val.toString());
+              paused = false;
+              resumeTime = Date.now()
+              startTime = Date.now() - timePassed;
+              console.log(startTime + " ST")
+              timer = setInterval(Timer, 1000);
+            }
+          } else {
+            if (breakForce) {
+              setTimeout(endBreak, 600000);
+            } else {
+              alert("No goal has been set, please use the drop-down menu to set a goal");
+              return null
             }
           }
 
-          function pad(time) {
-            return (("0" + time).length > 2 ? time : ("0" + time));
+
+          function Timer() {
+            timePassed = (Date.now() - startTime);
+            unPausedTime = Date.now() - resumeTime;
+            if ((timePassed > goal) && !passGoal) {
+              let x = document.getElementById("GoalAudio");
+              x.volume = 0.35;
+              x.play();
+              passGoal = true;
+              passedGoal();
+
+              async function passedGoal() {
+                const username = searchParams.get("username")
+                const response = await fetch("/goal", {
+                  method: "POST",
+                  headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({"username": username})
+                });
+              }
+            }
+
+            if (unPausedTime >= (3600 * 1000)) {
+              clearInterval(timer);
+              breakForce = true;
+              paused = true;
+              unPausedTime = Date.now() - resumeTime;
+              timePassed = (Date.now() - startTime);
+              alert("You must take a break for at least 10 minutes, timer has been paused")
+              return 0;
+            }
+            let hours = Math.floor(timePassed / 3600000)
+            let minutes = Math.floor((timePassed - (hours * 3600000)) / 60000)
+            let seconds = Math.floor((timePassed - (hours * 3600000) - (minutes * 60000)) / 1000)
+            let milliseconds = timePassed
+
+            function progressBar() {
+              let r = document.querySelector(':root');
+              let val = milliseconds / goal;
+              let deciVal = Math.trunc(val * 10000)
+              if (deciVal / 100 >= 100) {
+                document.getElementById("button").textContent = ('100%');
+                val = 0;
+                r.style.setProperty('--percent', val.toString());
+              } else {
+                document.getElementById("button").textContent = ((deciVal / 100).toString() + '%');
+                val = 1727 - (1727 * val);
+                r.style.setProperty('--percent', val.toString());
+              }
+            }
+
+            function pad(time) {
+              return (("0" + time).length > 2 ? time : ("0" + time));
+            }
+
+            seconds = pad(seconds);
+            minutes = pad(minutes);
+            hours = pad(hours);
+            timerDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+            progressBar()
           }
 
-          seconds = pad(seconds);
-          minutes = pad(minutes);
-          hours = pad(hours);
-          timerDisplay.textContent = `${hours}:${minutes}:${seconds}`;
-          progressBar()
-        }
-
-        async function pause() {
-          const username = searchParams.get("username")
-          const response = await fetch("/pause", {
-            method: "POST",
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({"username": username, "time": timerDisplay.textContent, "day": day})
-          })
-          const json = await response.json();
-          document.getElementById("button").textContent = await ('Paused');
-          console.log(JSON.stringify(json));
-        }
-
-        function endBreak() {
-          if (breakForce) {
-            alert("You may continue studying")
-            breakForce = false;
-          } else {
-            return 0;
+          async function pause() {
+            const username = searchParams.get("username")
+            const response = await fetch("/pause", {
+              method: "POST",
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({"username": username, "time": timerDisplay.textContent, "day": day})
+            })
+            const json = await response.json();
+            document.getElementById("button").textContent = await ('Paused');
+            console.log(JSON.stringify(json));
           }
-        }
+
+          function endBreak() {
+            if (breakForce) {
+              alert("You may continue studying")
+              breakForce = false;
+            } else {
+              return 0;
+            }
+          }
+        })
       }
 
       window.onbeforeunload = function () {

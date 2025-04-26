@@ -101,17 +101,31 @@
       if (text === false) {
         return null;
       } else {
-        guestAchievement((bruh) => {
-          let no = bruh;
-          window.location.href = "/dashboard.html?username=Guest";
-        })
+        clearGuest((Done) => {
+          let complete = Done.thing
+          guestAchievement((DoneAgain) => {
+            let  completed = DoneAgain.thingy
+              setTimeout(wait(), 2000)
+          })
+        });
       }
+    }
+
+    function wait() {
+      window.location.href = "/dashboard.html?username=Guest";
+    }
+
+    async function clearGuest(callback) {
+      const response = await fetch("/clearGuest")
+      json = await response.json()
+      console.log(JSON.stringify(json));
+      callback(json)
     }
 
     async function guestAchievement(callback) {
       const response = await fetch("/GuestAchievement")
-      const json = response.json()
-      console.log(JSON.stringify(json))
+      json = await response.json()
+      console.log(JSON.stringify(json));
       callback(json)
     }
 
