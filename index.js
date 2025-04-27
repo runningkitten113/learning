@@ -464,7 +464,7 @@ values ('Guest', false, false, false, false)`
       let query;
       query = await sql`select goalcompletion from s_fe80a0cc.procrastiNOT where username = ${username}`
       let numGoals = query[0].goalcompletion
-      numGoals = numGoals + 1;
+      numGoals = Number(numGoals) + 1;
       query = await sql`SELECT achievement1 from s_fe80a0cc.achievements where username = ${username}`
       if (numGoals === 1 && query[0].achievement1 === false){
         query = await sql`update s_fe80a0cc.achievements set achievement1 = true where username = ${username}`

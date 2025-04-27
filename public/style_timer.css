@@ -245,4 +245,103 @@ svg {
 #customOption{
     visibility: hidden;
     position: absolute;
+    left: 50px;
+}
+
+/* --- Media Query Fix for Custom Option (768px - 1440px) --- */
+
+@media screen and (min-width: 768px) and (max-width: 1440px) {
+
+    #customOption {
+        /* --- Position Top-Left --- */
+        position: absolute !important;  /* Position relative to nearest positioned ancestor or body */
+        top: 120px !important;         /* Distance from top edge (adjust as needed) */
+        left: 20px !important;        /* Distance from left edge (adjust as needed) */
+        /* remove margin-left: auto !important; */ /* Remove centering */
+        /* remove margin-right: auto !important; */
+        /* remove margin-top: 20px !important; */  /* Use 'top' property instead */
+        width: fit-content !important; /* Keep width based on content */
+        z-index: 2 !important;         /* Keep for stacking if needed */
+
+        /* --- Apply Target Styling --- */
+        background-color: transparent !important;
+        border: none !important;
+        padding: 10px !important;
+    }
+
+    /* Style elements inside based on target image */
+    #customOption label {
+        color: black;
+        display: inline-block;
+        width: 70px;
+        text-align: right;
+        margin-right: 5px;
+        font-weight: bold;
+        /* remove left: 50px; */ /* Likely not needed with container positioned */
+    }
+
+    #customOption input[type=number] {
+        background-color: white !important;
+        border: 1px solid black !important;
+        color: black;
+        width: 65px;
+        padding: 8px;
+        /* remove left: 50px; */ /* Likely not needed */
+        margin-bottom: 10px;
+        border-radius: 3px;
+    }
+
+    #customOption input[type=submit] {
+        background-color: white !important;
+        color: black !important;
+        border: 1px solid black !important;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 3px;
+        display: block;
+        margin: 15px auto 0 auto; /* Keep centering the button within the container */
+        font-weight: bold;
+    }
+}
+
+/* Keep your styles for other screen sizes as needed */
+@media screen and (max-width: 767px) {
+    /* Your existing styles for smaller screens */
+    #customOption {
+        background-color: transparent !important;
+        border: none !important;
+        /* Consider similar positioning if needed */
+        /* position: absolute !important; */
+        /* top: 15px !important; */
+        /* left: 15px !important; */
+        padding: 10px !important;
+        width: fit-content !important; /* Adjust width if needed */
+        z-index: 2 !important;
+    }
+    #customOption label { display: block; text-align: left; margin-bottom: 3px; width: auto;} /* Adjust alignment */
+    #customOption input[type=number] { background-color: white !important; border: 1px solid black !important; color: black; display: inline-block; margin: 0 5px 10px 0;} /* Adjust display/margin */
+    #customOption input[type=submit] { background-color: white !important; color: black !important; border: 1px solid black !important; display: block; margin-top: 10px;} /* Adjust display/margin */
+}
+
+/* --- Optional: Styling for other sizes --- */
+/* You might want similar styling rules (without position:static)
+   in other media queries or base styles if the white background
+   and blue button appear there too and you dislike them. */
+
+/* Example for screens below 768px */
+@media screen and (max-width: 767px) {
+    #customOption {
+        /* Only apply styling changes, keep default position:absolute */
+        background-color: transparent !important;
+        border: none !important;
+        padding: 10px !important;
+        width: 90% !important; /* Adjust width */
+        /* Position fix for very small screens might still be needed if overlap occurs */
+        /* position: static !important; */
+        /* margin-top: 15px !important; */
+        /* z-index: 2 !important; */
+    }
+    #customOption label { display: block; text-align: center; margin-bottom: 3px; width: auto;}
+    #customOption input[type=number] { background-color: white !important; border: 1px solid black !important; color: black; display: block; margin: 0 auto 10px auto;}
+    #customOption input[type=submit] { background-color: white !important; color: black !important; border: 1px solid black !important; }
 }

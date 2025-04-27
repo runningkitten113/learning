@@ -165,11 +165,13 @@
                         let text = themeBtn.id.split(" ")
                         let colour = text[1]
                         prim(colour)
+                        setTimeout(function(){window.location.reload()}, 1000)
                         clearInterval(check)
                     } else if (themeBtn.id.includes("Sec")) {
                         let text = themeBtn.id.split(" ")
                         let colour = text[1]
                         sec(colour)
+                        setTimeout(function(){window.location.reload()}, 1000)
                         clearInterval(check)
                     } else if (themeBtn.id === "Cancel") {
                         clearInterval(check)

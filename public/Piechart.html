@@ -108,7 +108,7 @@
 <body>
 
 <!-- Navigation Bar -->
-<nav>
+<nav id="Change">
   <div class="nav-logo">
     <a href="#">procrasti<span>NOT</span></a>
   </div>
@@ -151,6 +151,32 @@
     href = document.getElementById('home').getAttribute('href');
     href = "/index.html";
     document.getElementById('home').setAttribute('href', href);
+
+    getSec((col) => {
+      let sec = col.secondarycolour;
+      console.log(sec)
+      if (sec) {
+        document.body.style.backgroundColor = sec;
+        let nav = document.getElementById("Change");
+        nav.style.backgroundColor = sec;
+      }
+    })
+
+    async function getSec(callback) {
+      const searchParams = new URLSearchParams(window.location.search);
+      const user = searchParams.get("username");
+      const response = await fetch("/getSecCol", {
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({'username': user})
+      })
+      const json = await response.json();
+      console.log(JSON.stringify(json));
+      callback(json);
+    }
 
     async function getGoalsAchieved(callback) {
       console.log("getGoalsAchieved");
@@ -215,9 +241,3 @@
 </script>
 </body>
 </html>
-
-<!-- Homepage Button -->
-<div class="back-button-container">
-  <a href="/main" class="back-button">Home</a>
-</div>
-</nav>

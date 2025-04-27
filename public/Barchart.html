@@ -167,7 +167,7 @@
 <body>
 
 <!-- Navigation Bar -->
-<nav>
+<nav id="Change">
   <div class="nav-logo">
     <a href="#">procrasti<span>NOT</span></a>
   </div>
@@ -218,6 +218,57 @@
   href = "/index.html";
   document.getElementById('home').setAttribute('href', href);
   const ctx = document.getElementById('myChart');
+
+    getPrim((col) => {
+      let prim = col.primarycolour;
+      if (prim) {
+        document.querySelectorAll("#reload").forEach(el => {
+          el.style.backgroundColor = prim;
+        })
+      }
+    })
+
+    async function getPrim(callback) {
+      const searchParams = new URLSearchParams(window.location.search);
+      const user = searchParams.get("username");
+      const response = await fetch("/getPrimCol", {
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({'username': user})
+      })
+      const json = await response.json();
+      console.log(JSON.stringify(json));
+      callback(json);
+    }
+
+    getSec((col) => {
+      let sec = col.secondarycolour;
+      console.log(sec)
+      if (sec) {
+        document.body.style.backgroundColor = sec;
+        let nav = document.getElementById("Change");
+        nav.style.backgroundColor = sec;
+      }
+    })
+
+    async function getSec(callback) {
+      const searchParams = new URLSearchParams(window.location.search);
+      const user = searchParams.get("username");
+      const response = await fetch("/getSecCol", {
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({'username': user})
+      })
+      const json = await response.json();
+      console.log(JSON.stringify(json));
+      callback(json);
+    }
 
   async function getTimesWeek(callback){
     const username = searchParams.get('username');
