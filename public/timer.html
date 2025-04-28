@@ -243,7 +243,7 @@
         goalMins = removeLeadingZero(goalMins);
         goalSec = removeLeadingZero(goalSec);
         alert("Goal set to " + goalHrs + " hours " + goalMins + " minutes and " + goalSec + " seconds")
-        document.getElementsByClassName("customOption").visibility = "hidden";
+        document.getElementById("customOption").style.display = "none";
         document.getElementById("button").textContent = "Start Studying!"
         goalToDB(goal)
         return 0;
