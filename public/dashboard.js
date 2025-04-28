@@ -258,8 +258,8 @@ async function findUpdates(callback, deletedNum){
 
 function clearTasks() {
     let text = confirm("Are you sure you want to clear all tasks?")
-    if (confirm(text) === true){
-    taskList = document.getElementById("list")
+    if (text === true){
+    let taskList = document.getElementById("list")
     taskList.textContent = ""
     let count = 0
     dbClear().then(null)
